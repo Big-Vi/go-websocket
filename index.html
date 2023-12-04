@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <input type="text" id="messageInput" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+    <ul id="messages"></ul>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws");
+
+        socket.onmessage = function (event) {
+            const messages = document.getElementById("messages");
+            const li = document.createElement("li");
+            console.log(typeof(event.data))
+            const data = JSON.parse(event.data)
+            const value = `value: ${data.value} type: ${data.type}`
+            li.appendChild(document.createTextNode(value));
+            messages.appendChild(li);
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("messageInput");
+            const message = {value: input.value, type: "pending"}
+            socket.send(JSON.stringify(message));
+            input.value = "";
+        }
+    </script>
+</body>
+</html>
